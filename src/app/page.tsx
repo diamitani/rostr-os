@@ -1,65 +1,156 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, Layers, Zap, Brain, Globe } from "lucide-react";
+
+const features = [
+  {
+    icon: Layers,
+    title: "NPAO Priority Framework",
+    desc: "Every task classified as Necessity, Anxiety, Priority, or Opportunity — so you always know what to do first.",
+  },
+  {
+    icon: Zap,
+    title: "4Ds Lifecycle",
+    desc: "PreD → Design → Develop → Deploy → Deliver. Every project moves through a proven phase gate system.",
+  },
+  {
+    icon: Brain,
+    title: "PAL AI Intake",
+    desc: "Describe your project in plain English. PAL compiles it into a structured build plan with tasks, estimates, and priorities.",
+  },
+  {
+    icon: Globe,
+    title: "Cross-Org Ready",
+    desc: "Manage personal tasks, business projects, and team workflows across organizations — all in one dashboard.",
+  },
+];
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="border-b border-zinc-800">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-sm font-bold">
+              R
+            </div>
+            <span className="font-semibold text-lg">ROSTR OS</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm text-zinc-400 hover:text-white transition-colors">
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="text-sm px-4 py-2 rounded-lg bg-white text-black font-medium hover:bg-zinc-200 transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              Get started
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-24 max-w-4xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-700 bg-zinc-800/50 text-sm text-zinc-300 mb-8">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          Open Source — MIT License
+        </div>
+
+        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight">
+          The AI-Native{" "}
+          <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+            Project OS
+          </span>
+        </h1>
+
+        <p className="text-lg text-zinc-400 max-w-2xl mb-10 leading-relaxed">
+          An open-source Asana alternative powered by the ROSTR framework.
+          NPAO task prioritization, 4Ds project lifecycle, and PAL AI intake —
+          built for individuals and teams who want structure without the bloat.
+        </p>
+
+        <div className="flex gap-4">
+          <Link
+            href="/signup"
+            className="px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-all inline-flex items-center gap-2"
+          >
+            Start building free
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link
+            href="https://github.com/pdiamitani/rostr-os"
+            target="_blank"
+            className="px-6 py-3 rounded-xl border border-zinc-700 text-zinc-300 font-medium hover:bg-zinc-800 transition-all"
+          >
+            View on GitHub
+          </Link>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="border-t border-zinc-800 py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-4">Built on ROSTR</h2>
+          <p className="text-zinc-400 text-center mb-12 max-w-xl mx-auto">
+            The same framework that powers Atlas HXM&apos;s GTM automation —
+            now available as an open-source project management platform.
           </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((f) => (
+              <div
+                key={f.title}
+                className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 transition-colors"
+              >
+                <f.icon className="w-8 h-8 text-blue-400 mb-4" />
+                <h3 className="font-semibold mb-2">{f.title}</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* NPAO Visual */}
+      <section className="border-t border-zinc-800 py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4">NPAO: Always know what&apos;s next</h2>
+          <p className="text-zinc-400 mb-12">
+            Every task gets a priority class. The execution order is non-negotiable.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            {[
+              { cls: "N", label: "Necessity", sub: "I MUST — hard blockers", color: "bg-red-500/10 border-red-500/20 text-red-400" },
+              { cls: "A", label: "Anxiety", sub: "I WON'T HAVE PEACE", color: "bg-amber-500/10 border-amber-500/20 text-amber-400" },
+              { cls: "P", label: "Priority", sub: "I NEED — core work", color: "bg-blue-500/10 border-blue-500/20 text-blue-400" },
+              { cls: "O", label: "Opportunity", sub: "I CAN — optional", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
+            ].map((item) => (
+              <div key={item.cls} className={`p-5 rounded-xl border ${item.color} text-left`}>
+                <div className="text-2xl font-bold mb-1">{item.cls}</div>
+                <div className="font-semibold text-sm">{item.label}</div>
+                <div className="text-xs mt-1 opacity-60">{item.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex items-center justify-center gap-2 text-sm text-zinc-500">
+            <span>N</span><span className="text-zinc-600">→</span>
+            <span>A</span><span className="text-zinc-600">→</span>
+            <span>P</span><span className="text-zinc-600">→</span>
+            <span>O</span>
+            <span className="ml-2 text-zinc-600">Execution order is strict</span>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-zinc-800 py-8 px-6 text-center text-sm text-zinc-500">
+        <p>ROSTR OS — Open Source (MIT) · Built with the ROSTR Framework · <Link href="https://rostr-paper.vercel.app" className="underline hover:text-zinc-300" target="_blank">Read the paper</Link></p>
+      </footer>
     </div>
   );
 }
