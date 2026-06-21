@@ -1,39 +1,51 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
+
+// Lazy-init JWT verifier (only when Cognito is configured)
+let verifier: ReturnType<typeof CognitoJwtVerifier.create> | null = null;
+
+function getVerifier() {
+  if (!verifier) {
+    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    const clientId = process.env.COGNITO_CLIENT_ID;
+    if (!userPoolId || !clientId) return null;
+
+    verifier = CognitoJwtVerifier.create({
+      userPoolId,
+      tokenUse: "id",
+      clientId,
+    });
+  }
+  return verifier;
+}
+
+async function getUserFromCookies(request: NextRequest) {
+  const v = getVerifier();
+  if (!v) return null;
+
+  const idToken = request.cookies.get("id_token")?.value;
+  if (!idToken) return null;
+
+  try {
+    const payload = await v.verify(idToken);
+    return {
+      sub: payload.sub,
+      email: payload.email as string,
+      name: (payload.name as string) || "",
+    };
+  } catch {
+    return null;
+  }
+}
 
 export default async function proxy(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // If Supabase isn't configured, just pass through — auth is client-side
-  if (!url || !key) {
+  // If Cognito isn't configured, pass through
+  const userPoolId = process.env.COGNITO_USER_POOL_ID;
+  if (!userPoolId) {
     return NextResponse.next();
   }
 
-  // Dynamic import so build doesn't fail without Supabase
-  const { createServerClient } = await import("@supabase/ssr");
-
-  let supabaseResponse = NextResponse.next({ request });
-
-  const supabase = createServerClient(url, key, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
-        );
-        supabaseResponse = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
-        );
-      },
-    },
-  });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUserFromCookies(request);
 
   // Protected routes
   const protectedPaths = ["/dashboard", "/projects", "/tasks", "/intake", "/settings"];
@@ -59,11 +71,11 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return supabaseResponse;
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
